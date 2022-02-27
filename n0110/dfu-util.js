@@ -221,8 +221,12 @@ var device = null;
         let detachButton = document.querySelector("#detach");
         let downloadInternalButton = document.querySelector("#download_internal");
         let downloadExternalButton = document.querySelector("#download_external");
+        let downloadSlotAButton = document.querySelector("#download_slota");
+        let downloadSlotBButton = document.querySelector("#download_slotb");
         let uploadInternalButton = document.querySelector("#upload_internal");
         let uploadExternalButton = document.querySelector("#upload_external");
+        let uploadSlotAButton = document.querySelector("#upload_slota");
+        let uploadSlotBButton = document.querySelector("#upload_slotb");
         let statusDisplay = document.querySelector("#status");
         let infoDisplay = document.querySelector("#usbInfo");
         let dfuDisplay = document.querySelector("#dfuInfo");
@@ -321,8 +325,12 @@ var device = null;
             detachButton.disabled = true;
             uploadInternalButton.disabled = true;
             uploadExternalButton.disabled = true;
+            uploadSlotAButton.disabled = true;
+            uploadSlotBButton.disabled = true;
             downloadInternalButton.disabled = true;
             downloadExternalButton.disabled = true;
+            downloadSlotAButton.disabled = true;
+            downloadSlotBButton.disabled = true;
             firmwareFileField.disabled = true;
         }
 
@@ -368,11 +376,15 @@ var device = null;
                     if (!desc.CanUpload) {
                         uploadInternalButton.disabled = true;
                         uploadExternalButton.disabled = true;
+                        uploadSlotAButton.disabled = true;
+                        uploadSlotBButton.disabled = true;
                         dfuseUploadSizeField.disabled = true;
                     }
                     if (!desc.CanDnload) {
                         downloadInternalButton.disabled = true;
                         downloadExternalButton.disabled = true;
+                        downloadSlotAButton.disabled = true;
+                        downloadSlotBButton.disabled = true;
                     }
                 }
 
@@ -435,16 +447,24 @@ var device = null;
                 detachButton.disabled = false;
                 uploadInternalButton.disabled = true;
                 uploadExternalButton.disabled = true;
+                uploadSlotAButton.disabled = true;
+                uploadSlotBButton.disabled = true;
                 downloadInternalButton.disabled = true;
                 downloadExternalButton.disabled = true;
+                downloadSlotAButton.disabled = true;
+                downloadSlotBButton.disabled = true;
                 firmwareFileField.disabled = true;
             } else {
                 // DFU
                 detachButton.disabled = true;
                 uploadInternalButton.disabled = false;
                 uploadExternalButton.disabled = false;
+                uploadSlotAButton.disabled = false;
+                uploadSlotBButton.disabled = false;
                 downloadInternalButton.disabled = false;
                 downloadExternalButton.disabled = false;
+                downloadSlotAButton.disabled = false;
+                downloadSlotBButton.disabled = false;
                 firmwareFileField.disabled = false;
             }
 
@@ -669,6 +689,18 @@ var device = null;
           saveAs(blob, "external.bin");
         }));
 
+        uploadSlotAButton.addEventListener('click', uploadEventListener(async function(maxSize) {
+          device.startAddress = 0x90000000;
+          const blob = await device.do_upload(transferSize, 4096*1024);
+          saveAs(blob, "external.bin");
+        }));
+
+        uploadSlotBButton.addEventListener('click', uploadEventListener(async function(maxSize) {
+          device.startAddress = 0x90400000;
+          const blob = await device.do_upload(transferSize, 4096*1024);
+          saveAs(blob, "external.bin");
+        }));
+
         firmwareFileField.addEventListener("change", function() {
             firmwareFile = null;
             if (firmwareFileField.files.length > 0) {
@@ -736,6 +768,16 @@ var device = null;
 
         downloadExternalButton.addEventListener('click', downloadEventListener(async function() {
           device.startAddress = 0x90000000;
+          return device.do_download(transferSize, firmwareFile, false);
+        }));
+
+        downloadSlotAButton.addEventListener('click', downloadEventListener(async function() {
+          device.startAddress = 0x90000000;
+          return device.do_download(transferSize, firmwareFile, false);
+        }));
+
+        downloadSlotAButton.addEventListener('click', downloadEventListener(async function() {
+          device.startAddress = 0x90040000;
           return device.do_download(transferSize, firmwareFile, false);
         }));
 
