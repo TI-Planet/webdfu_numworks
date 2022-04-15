@@ -777,7 +777,7 @@ var device = null;
         }));
 
         downloadSlotBButton.addEventListener('click', downloadEventListener(async function() {
-          device.startAddress = 0x90040000;
+          device.startAddress = 0x90400000;
           return device.do_download(transferSize, firmwareFile, false);
         }));
 
