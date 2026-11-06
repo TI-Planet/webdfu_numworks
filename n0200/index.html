@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="sakura.css" />
+    <title>WebUSB DFU for NumWorks N0200</title>
+    <script src="dfu.js"></script>
+    <script src="dfuse.js"></script>
+    <script src="n0200.js"></script>
+    <script src="dfu-util.js"></script>
+    <style>
+      p.warning {
+        color: red;
+      }
+      p.error {
+        color: red;
+        font-weight: bold;
+      }
+      label.radio {
+        display: inline;
+      }
+      input:invalid {
+        color:red;
+      }
+    </style>
+  </head>
+  <body>
+    <p>
+      <span id="status"></span>
+    </p>
+    <p style="display: none;">
+      <label for="vid">Vendor ID (hex):</label>
+      <input type="text" name="vid" id="vid" maxlength="6" size="8" pattern="0x[A-Fa-f0-9]{1,4}"/>
+      <label for="pid">Product ID (hex):</label>
+      <input type="text" name="pid" id="pid" maxlength="6" size="8" pattern="0x[A-Fa-f0-9]{1,4}"/>
+    </p>
+    <p style="text-align: center;">
+      Put your N0200 in DFU mode (hold the <b>6</b> key while plugging in USB), then click here:<br>
+      <button id="connect">Connect to NumWorks N0200</button>
+    </p>
+    <dialog id="interfaceDialog">
+      Your device has multiple DFU interfaces. Select one from the list below:
+      <form id="interfaceForm" method="dialog">
+        <button id="selectInterface" type="submit">Select interface</button>
+      </form>
+    </dialog>
+    <p>
+      <div id="usbInfo" style="white-space: pre"></div>
+      <div id="dfuInfo" style="white-space: pre"></div>
+    </p>
+    <fieldset style="display: none">
+      <legend>Runtime mode</legend>
+      <button id="detach" disabled="true">Detach DFU</button>
+    </fieldset>
+    <fieldset>
+      <form id="configForm">
+        <input type="number" name="transferSize" id="transferSize" value="2048" style="display: none; visibility: hidden"/>
+        <fieldset>
+          <legend>Flash firmware onto device</legend>
+          <p>
+            Select a <b>.dfu</b> firmware image. The firmware is written to the
+            internal flash and the device reboots through the bootloader.
+          </p>
+          <p>
+            <input type="file" id="firmwareFile" name="file" accept=".dfu" disabled="true"/>
+          </p>
+          <p id="layoutWarning" class="warning" style="display: none;"></p>
+          <p>
+            <button id="flash_firmware" disabled="true">Flash N0200 firmware<br />(.dfu &rarr; 0x98000000)</button>
+          </p>
+          <div class="log" id="downloadLog"></div>
+        </fieldset>
+      </form>
+    </fieldset>
+    <br/>
+    <footer>
+      <hr>
+      <p><b>Recovery:</b> if flashed firmware no longer talks over USB, hold the <b>6</b> key while plugging in USB to re-enter the bootloader's rescue mode, then flash a stock image again.</p>
+      <p>WebUSB is currently only supported by Chromium / Google Chrome.</p>
+      <p>For Chrome to communicate with a USB device, it must have permission to access the device and the operating system must be able to load a generic driver that libusb can talk to.</p>
+      <p>
+        <ul>
+          <li>On Windows, that means that an appropriate WinUSB/libusb driver must first be installed. This can be done manually with programs such as <a href="https://zadig.akeo.ie/">Zadig</a>.</li>
+          <li>On Linux, that means that the current user must have permission to access the device.</li>
+          <li>On macOS and ChromeBooks, it should work directly.</li>
+        </ul>
+      </p>
+    </footer>
+  </body>
+</html>
